@@ -2,6 +2,7 @@ import os
 from contextlib import asynccontextmanager
 from typing import AsyncGenerator
 from sqlalchemy.ext.asyncio import create_async_engine, AsyncEngine, AsyncConnection
+from sqlalchemy import create_engine
 from sqlalchemy import text
 
 DB_HOST = os.getenv("POSTGRES_HOST", "db")
@@ -10,8 +11,10 @@ DB_NAME = os.getenv("POSTGRES_DB", "heatmap")
 DB_USER = os.getenv("POSTGRES_USER", "heatmap")
 DB_PASS = os.getenv("POSTGRES_PASSWORD", "heatmap")
 DATABASE_URL = f"postgresql+asyncpg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
+SYNC_DATABASE_URL = f"postgresql+psycopg://{DB_USER}:{DB_PASS}@{DB_HOST}:{DB_PORT}/{DB_NAME}"
 
 engine: AsyncEngine = create_async_engine(DATABASE_URL, future=True, echo=False)
+sync_engine = create_engine(SYNC_DATABASE_URL, future=True)
 
 @asynccontextmanager
 async def conn_ctx() -> AsyncGenerator[AsyncConnection, None]:
@@ -26,7 +29,7 @@ async def upsert_entity(conn: AsyncConnection, name: str, etype: str, aliases, w
         RETURNING id
     """)
     res = await conn.execute(q, {"type": etype, "name": name, "aliases": aliases, "wiki_id": wiki_id})
-    return res.fetchone()[0]
+    return res.scalar_one()
 
 async def insert_signal(conn: AsyncConnection, entity_id: int, source: str, ts, metric: str, value: float):
     await conn.execute(text("""

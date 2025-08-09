@@ -12,16 +12,15 @@ CREATE TABLE IF NOT EXISTS entities (
 );
 
 CREATE TABLE IF NOT EXISTS signals (
-  id BIGSERIAL PRIMARY KEY,
   entity_id INT REFERENCES entities(id),
   source TEXT NOT NULL,          -- youtube | reddit | wiki | trends | x | tiktok | rss
   ts TIMESTAMPTZ NOT NULL,
   metric TEXT NOT NULL,          -- views | mentions | comments | etc
-  value DOUBLE PRECISION NOT NULL
+  value DOUBLE PRECISION NOT NULL,
+  PRIMARY KEY (entity_id, ts, source, metric)
 );
 
 CREATE TABLE IF NOT EXISTS scores (
-  id BIGSERIAL PRIMARY KEY,
   entity_id INT REFERENCES entities(id),
   ts TIMESTAMPTZ NOT NULL,
   velocity_z DOUBLE PRECISION,
@@ -32,8 +31,12 @@ CREATE TABLE IF NOT EXISTS scores (
   tentpole DOUBLE PRECISION,
   decay DOUBLE PRECISION,
   risk DOUBLE PRECISION,
-  heat DOUBLE PRECISION
+  heat DOUBLE PRECISION,
+  PRIMARY KEY (entity_id, ts)
 );
 
 SELECT create_hypertable('signals', 'ts', if_not_exists => TRUE);
 SELECT create_hypertable('scores', 'ts', if_not_exists => TRUE);
+
+-- Helpful index for latest-per-entity queries
+CREATE INDEX IF NOT EXISTS idx_scores_latest ON scores (entity_id, ts DESC);

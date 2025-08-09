@@ -1,0 +1,8 @@
+sources:
+  wiki:         {enabled: true,  weight: 1.0}
+  trends:       {enabled: true,  weight: 1.0}
+  scrape_news:  {enabled: false, weight: 0.6}
+  apify_tiktok: {enabled: false, weight: 0.7}
+  tt_cc:        {enabled: false, weight: 1.0}
+  tt_search:    {enabled: false, weight: 1.0}
+  gdelt_gkg:    {enabled: true,  weight: 1.0}

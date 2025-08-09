@@ -11,3 +11,5 @@ scipy==1.14.1
 pytrends==4.9.2
 python-dateutil==2.9.0.post0
 rapidfuzz==3.9.5
+PyYAML==6.0.2
+apify-client==1.7.1

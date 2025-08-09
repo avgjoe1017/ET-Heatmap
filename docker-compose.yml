@@ -49,6 +49,10 @@ services:
       context: .
       dockerfile: services/worker/Dockerfile
     env_file: .env
+    volumes:
+      - ./flows:/app/flows
+      - ./libs:/app/libs
+      - ./configs:/app/configs
     depends_on:
       - scheduler
       - db

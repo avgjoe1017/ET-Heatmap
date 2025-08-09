@@ -8,6 +8,5 @@ COPY flows ./flows
 COPY libs ./libs
 COPY configs ./configs
 
-ENV PREFECT_API_URL=${PREFECT_API_URL}
 ENV PYTHONPATH="/app"
-CMD ["prefect", "agent", "start", "--work-queue", "default"]
+CMD ["sh", "-lc", "prefect work-pool create -t process default-pool || true; prefect worker start -p default-pool"]
