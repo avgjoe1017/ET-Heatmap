@@ -21,14 +21,14 @@ async def conn_ctx() -> AsyncGenerator[AsyncConnection, None]:
     async with engine.begin() as conn:
         yield conn
 
-async def upsert_entity(conn: AsyncConnection, name: str, etype: str, aliases, wiki_id: str | None):
+async def upsert_entity(conn: AsyncConnection, name: str, etype: str, aliases, wiki_id: str | None, category: str | None = None):
     q = text("""
-        INSERT INTO entities (type, name, aliases, wiki_id)
-        VALUES (:type, :name, :aliases, :wiki_id)
-        ON CONFLICT (name) DO UPDATE SET aliases = EXCLUDED.aliases
+        INSERT INTO entities (type, category, name, aliases, wiki_id)
+        VALUES (:type, :category, :name, :aliases, :wiki_id)
+        ON CONFLICT (name) DO UPDATE SET aliases = EXCLUDED.aliases, category = COALESCE(EXCLUDED.category, entities.category)
         RETURNING id
     """)
-    res = await conn.execute(q, {"type": etype, "name": name, "aliases": aliases, "wiki_id": wiki_id})
+    res = await conn.execute(q, {"type": etype, "category": category, "name": name, "aliases": aliases, "wiki_id": wiki_id})
     return res.scalar_one()
 
 async def insert_signal(conn: AsyncConnection, entity_id: int, source: str, ts, metric: str, value: float):

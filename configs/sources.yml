@@ -1,8 +1,20 @@
 sources:
+  # Core Tier 0 sources (always-on, highest ROI)
   wiki:         {enabled: true,  weight: 1.0}
   trends:       {enabled: true,  weight: 1.0}
-  scrape_news:  {enabled: false, weight: 0.6}
-  apify_tiktok: {enabled: false, weight: 0.7}
-  tt_cc:        {enabled: false, weight: 1.0}
-  tt_search:    {enabled: false, weight: 1.0}
+  trade_rss:    {enabled: true, weight: 1.2}      # Trade publications (highest authority)
+  google_news:  {enabled: true, weight: 0.9}      # News aggregation
+  reddit:       {enabled: true, weight: 1.0}      # Reddit enhanced monitoring
+  youtube:      {enabled: true, weight: 1.1}      # YouTube trending + search
+  imdb_box_office: {enabled: true, weight: 1.0}   # Box office & releases
+  
+  # Legacy sources (maintain compatibility)
+  entity_discovery: {enabled: true, weight: 1.0}
+  scrape_news:  {enabled: true, weight: 0.6}
+  apify_tiktok: {enabled: true, weight: 0.7}       # Enable with API token
+  tt_cc:        {enabled: true, weight: 1.0}       # Enable Creative Center
+  tt_search:    {enabled: true,  weight: 1.0}
   gdelt_gkg:    {enabled: true,  weight: 1.0}
+  advanced_scoring: {enabled: true, weight: 1.0}
+  reddit_ingest: {enabled: true, weight: 0.8}     # Legacy Reddit (superseded by enhanced)
+  youtube_ingest: {enabled: true, weight: 0.9}    # YouTube flows
